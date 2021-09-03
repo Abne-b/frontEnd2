@@ -1,0 +1,45 @@
+* {
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+}
+html{
+    min-height: 100vh;
+}
+a{
+    text-decoration: none;
+}
+a:visited{
+    color: #000;
+}
+body{
+    display: flex;
+    align-items:center;
+    justify-content:center;
+    flex-wrap: wrap;
+    padding: 3%;
+}
+.card{
+    display: flex;
+    cursor: pointer;
+    align-items:center;
+    justify-content:center;
+    flex-direction: column;
+    max-width: 250px;
+    border-radius: 10px;
+    box-shadow: 0 0 1rem 3px #222;
+    padding: 2%;
+    font-size:20px;
+    margin: 2%;
+    transition: transform 0.35s ease-in-out;
+}
+.card:hover{
+    transform: scale(1.025);
+}
+.card *{
+    font-size: 1.5em;
+}
+.card img{
+    width: 100%;
+    border-radius: 10px;
+}
