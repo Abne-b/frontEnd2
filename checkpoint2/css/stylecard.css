@@ -1,0 +1,18 @@
+body{
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+div{
+    border: 1px solid;
+}
+
+.tachado{
+    text-decoration-line: line-through;
+    font-weight: normal;
+}
+
+.negrito{
+    font-weight: bold;
+}
