@@ -1,0 +1,44 @@
+body{
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+form{
+    display: flex;
+}
+
+fieldset{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+#box{
+    margin-top: 8px;
+    margin-right: 10px;
+    height: 100%;
+    max-width: 50%;
+    border: 1px solid;
+    display: none;
+    padding: 5px;
+}
+
+button{
+    margin: 0px 10px;
+}
+
+.checkbox{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+p, h1{
+    text-align: center;
+    word-wrap: break-word;
+}
+
+.tachado{
+    text-decoration-line: line-through;
+}
