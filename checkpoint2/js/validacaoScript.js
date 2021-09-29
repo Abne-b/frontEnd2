@@ -1,5 +1,9 @@
 // Script para fazer as validações
 
+//Adiciona os eventos
+document.getElementById("submit").addEventListener('click', validar);
+document.getElementById("fetch").addEventListener('click', pegarAPI);
+
 // Função campoVazio
 // Paramêtros: (Campo)[String] para ser validado
 // Retorna: Boolean
@@ -35,35 +39,14 @@ function menorTamanhoCampo(campo, tamanho) {
     }
 }
 
-// Função dataConclusaoValidar
-// Paramêtros: Nenhum
-// Retorna: Boolean
-// Faz: Informa caso a data de conclusão seja anterior a data de inicio
-function dataConclusaoValidar() {
-    const mensagem = "Data de conclusão não pode ser anterior a data de criação!";
-    let elemento = document.getElementById("dateEnd");
-    let datafim = elemento.value;
-    var date = new Date(datafim.split('-').join('-'));
-    var dataAtual = new Date();
-    if (date < dataAtual) {
-        alert(mensagem);
-        elemento.style.background = "red";
-        return true;
-    }
-    else {
-        elemento.style.background = "white";
-        return false;
-    }
-}
 
-document.getElementById("submit").addEventListener('click', validar);
 
 // Função Validar
 // Paramêtros: Nenhum
 // Retorna: Void
 // Faz: Faz as verificações de validação e se tudo estiver certo irá criar os cards.
 function validar() {
-    if (campoVazio("title") || campoVazio("dateEnd") || campoVazio("description") || dataConclusaoValidar() || menorTamanhoCampo("description", 10))
+    if (campoVazio("title") || campoVazio("dateEnd") || campoVazio("description")  || menorTamanhoCampo("description", 10))
         alert("Verificar erro!");
     else
         criarCard();
@@ -75,67 +58,106 @@ function validar() {
 // Paramêtros: Nenhum
 // Retorna: Void
 // Faz: Cria um card com base nos dados do formulário
-function criarCard() {
+function criarCard(task) {
+
     // Criar os elementos para o card
-    let box = document.getElementById('box');
-    let titulo = document.querySelector('h1');
-    let paragrafo = document.querySelector('p');
-    let checkbox = document.getElementById('checkbox');
-    let botao = document.getElementById('cancelar');
+    let card = document.createElement('div');
+    let cardBody = document.createElement('div');
+    let cardTitle = document.createElement('h3');
+    let cardDescription = document.createElement('p');
+    let checkbox = document.createElement('input');
+    let botao = document.createElement('button');
+    let cardFooter = document.createElement('div');
+    let cardDueDate = document.createElement('div');
+    let cardCreationDate = document.createElement('div');
+
+    //Adicionando estilo aos elementos
+    card.classList.add("card");
+    cardBody.classList.add("card-body");
+    botao.classList.add("delete-button");
+    cardDueDate.classList.add("card-date");
+    cardCreationDate.classList.add("card-date");
+    cardFooter.classList.add("card-footer");
+
+    //Transformando input em checkbox
+    checkbox.type = "checkbox";
+    
+    //Dando conteúdo ao botão
+    botao.textContent = "Apagar";
 
     // Pegar dados do formulário
     let tituloFormulario = document.getElementById("title");
     let descricao = document.getElementById("description");
+    let creationDate = document.getElementById("dateCreate").value;
+    let dueDate = task ? "indefinida":document.getElementById("dateEnd").value;
 
     // Colocar os dados dentro dos elementos criados
-    titulo.textContent = tituloFormulario.value;
-    paragrafo.textContent = descricao.value;
-
+    cardTitle.textContent = task ? "" : tituloFormulario.value;
+    cardDescription.textContent = task ? task.title : descricao.value;
+    cardCreationDate.textContent = `Data de criação:\n${creationDate.split("-").reverse().join("-")}`
+    cardDueDate.textContent = `Data de conclusão:\n${dueDate.split("-").reverse().join("-")}`
     // Limpando o formulário
     tituloFormulario.value = "";
     descricao.value = "";
-    checkbox.addEventListener('click', tachar);
-    botao.addEventListener('click', remover);
 
-    // Exibindo o card
-    box.style.display = "block";
+    //Adicionando eventos
+    checkbox.addEventListener('click', e=>tachar(card));
+    botao.addEventListener('click', e=>remover(card));
+
+    //Agrupando elementos no corpo
+    cardBody.appendChild(checkbox);
+    cardBody.appendChild(cardDescription);
+
+    //Agrupando elementos no footer 
+    cardFooter.appendChild(cardCreationDate);
+    cardFooter.appendChild(cardDueDate);
+
+    // Adicionando os elementos ao card
+    cardTitle.textContent ? card.appendChild(cardTitle) : false;
+    card.appendChild(cardBody)
+    card.appendChild(botao);
+    card.appendChild(cardFooter);
+    
+    // Adicionando card ao container
+    document.querySelector("#card-container").appendChild(card);
+
+    //Verifica se task da API está completada e risca
+    task ? (task.completed ? tachar(card,true):false):false;
+
 }
 
 // Função Tachar
-// Paramêtros: Nenhum
+// Paramêtros: Card a ser tachado
 // Resulta: Void
 // Faz: Deixa o testo tachado indicando que a task foi concluida
-function tachar() {
-    let h1 = document.querySelector("h1");
-    let p = document.querySelector("p");
-    if (p.getAttribute('class') == "tachado") {
-        p.removeAttribute('class');
-        h1.removeAttribute('class');
-    }
-    else {
-        h1.setAttribute('class', "tachado");
-        p.setAttribute('class', "tachado");
-    }
+function tachar(card,api) {
+    let i = 1;
+    if(api) i = 0
+    card.children[i].children[1].classList.toggle("tachado")
+
 }
 
 // Funçao Remover
-// Paramêtros: Nenhum
-// Resulta: Void
+// Paramêtros: Card a ser removido
+// Retorno: Void
 // Faz: Remove os elementos do card e oculta o mesmo caso o usuário confime que deseja fazer isso
-function remover() {
+function remover(card) {
+    
     let opcao = confirm("Deseja cancelar a task?");
-
-    if (opcao) {
-        // Atribuindo as variáveis
-        let box = document.getElementById('box');
-        let titulo = document.querySelector('h1');
-        let paragrafo = document.querySelector('p');
-
-        // Limpando o card
-        titulo.textContent = "";
-        paragrafo.textContent = "";
-
-        // Ocultar o card
-        box.style.display = "none";
-    }
+    if(opcao)document.querySelector("#card-container").removeChild(card);
+    
 }
+
+function pegarAPI(){
+    
+    fetch("https://jsonplaceholder.typicode.com/todos/").then(response=>{
+        return response.json();
+    }).then(data=>{
+        data.forEach(e=>{
+            criarCard(e)
+        });
+    }).catch(error=>{
+        console.error(error);
+    });
+    
+}   
