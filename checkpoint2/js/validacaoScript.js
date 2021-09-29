@@ -1,4 +1,15 @@
-// Script para fazer as validações
+// Script para inserir a data atual no devido campo
+
+let dataCriacao = document.getElementById("dateCreate");
+let data = new Date();
+let dia = String(data.getDate()).padStart(2, '0');
+let mes = String(data.getMonth() + 1).padStart(2, '0');
+let ano = data.getFullYear();
+
+dataAtual = ano + '-' + mes + '-' + dia;
+dataCriacao.value = dataAtual;
+
+document.querySelector("#dateEnd").setAttribute("min",dataAtual);
 
 //Adiciona os eventos
 document.getElementById("submit").addEventListener('click', validar);
@@ -67,17 +78,20 @@ function criarCard(task) {
     let cardDescription = document.createElement('p');
     let checkbox = document.createElement('input');
     let botao = document.createElement('button');
+    let dateContainer = document.createElement('div');
     let cardFooter = document.createElement('div');
     let cardDueDate = document.createElement('div');
     let cardCreationDate = document.createElement('div');
 
     //Adicionando estilo aos elementos
+    botao.classList.add("delete-button");
+    dateContainer.classList.add("date-container");
     card.classList.add("card");
     cardBody.classList.add("card-body");
-    botao.classList.add("delete-button");
     cardDueDate.classList.add("card-date");
     cardCreationDate.classList.add("card-date");
     cardFooter.classList.add("card-footer");
+
 
     //Transformando input em checkbox
     checkbox.type = "checkbox";
@@ -101,7 +115,7 @@ function criarCard(task) {
     descricao.value = "";
 
     //Adicionando eventos
-    checkbox.addEventListener('click', e=>tachar(card));
+    checkbox.addEventListener('click', e=>tachar(card,task));
     botao.addEventListener('click', e=>remover(card));
 
     //Agrupando elementos no corpo
@@ -109,20 +123,21 @@ function criarCard(task) {
     cardBody.appendChild(cardDescription);
 
     //Agrupando elementos no footer 
-    cardFooter.appendChild(cardCreationDate);
-    cardFooter.appendChild(cardDueDate);
+    dateContainer.appendChild(cardCreationDate);
+    dateContainer.appendChild(cardDueDate);
+    cardFooter.appendChild(botao);
+    cardFooter.appendChild(dateContainer);
 
     // Adicionando os elementos ao card
     cardTitle.textContent ? card.appendChild(cardTitle) : false;
     card.appendChild(cardBody)
-    card.appendChild(botao);
     card.appendChild(cardFooter);
     
     // Adicionando card ao container
     document.querySelector("#card-container").appendChild(card);
 
     //Verifica se task da API está completada e risca
-    task ? (task.completed ? tachar(card,true):false):false;
+    task ? (task.completed ? checkbox.click():false):false;
 
 }
 
@@ -131,6 +146,7 @@ function criarCard(task) {
 // Resulta: Void
 // Faz: Deixa o testo tachado indicando que a task foi concluida
 function tachar(card,api) {
+
     let i = 1;
     if(api) i = 0
     card.children[i].children[1].classList.toggle("tachado")
